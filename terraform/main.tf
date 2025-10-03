@@ -198,3 +198,11 @@ resource "aws_security_group" "main" {
 }
 
 
+resource "aws_s3_bucket" "main" {
+  bucket = "amaya-logs"
+}
+
+
+
+
+
