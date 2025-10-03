@@ -202,6 +202,55 @@ resource "aws_s3_bucket" "main" {
   bucket = "amaya-logs"
 }
 
+# Main S3 bucket resource
+resource "aws_s3_bucket" "main1" {
+  bucket = "cf-templates-11mxdb199vu4y-eu-west-1"
+
+  tags = {
+    # Add your tags here if needed
+  }
+}
+
+resource "aws_s3_bucket_acl" "main1" {
+  bucket = aws_s3_bucket.main1.id
+
+  access_control_policy {
+    owner {
+      id = "e65b8be90b02e3c981860e80965f9ea93006d3a6431b4428f4d4c8ee1baf47bc"
+    }
+
+    grant {
+      permission = "FULL_CONTROL"
+
+      grantee {
+        id   = "e65b8be90b02e3c981860e80965f9ea93006d3a6431b4428f4d4c8ee1baf47bc"
+        type = "CanonicalUser"
+      }
+    }
+  }
+}
+
+
+# Versioning must be managed separately
+resource "aws_s3_bucket_versioning" "main1" {
+  bucket = aws_s3_bucket.main1.id
+
+  versioning_configuration {
+    status = "Disabled"
+  }
+}
+
+# Server-side encryption must be managed separately
+resource "aws_s3_bucket_server_side_encryption_configuration" "main1" {
+  bucket = aws_s3_bucket.main1.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+    bucket_key_enabled = false
+  }
+}
 
 
 
