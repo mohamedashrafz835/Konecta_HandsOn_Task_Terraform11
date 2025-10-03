@@ -167,9 +167,66 @@ resource "aws_internet_gateway" "gw" {
   }
 }
 
+# IAM Role
+resource "aws_iam_role" "auth_handler" {
+  name = "one-journey-dev-test-authHandler-eu-west-1-lambdaRole"
 
+  assume_role_policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "sts:AssumeRole"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
 
+  tags = {
+    STAGE = "dev-test"
+  }
+}
 
+resource "aws_iam_role_policy" "auth_handler_policy" {
+  name = "one-journey-dev-test-lambda"
+  role = "one-journey-dev-test-authHandler-eu-west-1-lambdaRole"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:CreateLogGroup",
+          "logs:PutLogEvents"
+        ]
+        Resource = "arn:aws:logs:eu-west-1:305905981536:log-group:/aws/lambda/one-journey-dev-test-authHandler:*:*"
+      },
+      {
+        Effect = "Allow"
+        Action = ["events:PutEvents"]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem"
+        ]
+        Resource = [
+          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-websockets-manager",
+          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-workflow-context",
+          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-sessions",
+          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-common-objects"
+        ]
+      }
+    ]
+  })
+}
 
 resource "aws_security_group" "main" {
   name        = "OJECSSecurityGroupLB-dev"
@@ -251,7 +308,3 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "main1" {
     bucket_key_enabled = false
   }
 }
-
-
-
-
