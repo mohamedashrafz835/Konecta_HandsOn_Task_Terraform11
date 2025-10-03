@@ -167,3 +167,34 @@ resource "aws_internet_gateway" "gw" {
   }
 }
 
+
+
+
+
+resource "aws_security_group" "main" {
+  name        = "OJECSSecurityGroupLB-dev"
+  description = "OJECSSecurityGroupLB-dev"
+  vpc_id      = "vpc-07a8c9cc4874997d8"
+
+  ingress {
+    description = "Free Ingress"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    OJ    = "OJ"
+    STAGE = "dev"
+  }
+}
+
+
