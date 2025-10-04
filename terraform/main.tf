@@ -307,4 +307,37 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "main1" {
     }
     bucket_key_enabled = false
   }
+
+}
+
+
+# Main bucket
+resource "aws_s3_bucket" "mybucket" {
+  bucket        = "oj-docu1-khovrqxn9xyiwxtprdjmq"
+  force_destroy = false
+
+  tags = {}
+}
+
+# Versioning (separate resource)
+resource "aws_s3_bucket_versioning" "mybucket_versioning" {
+  bucket = aws_s3_bucket.mybucket.id
+
+  versioning_configuration {
+    status     = "Disabled" # Change to "Enabled" if you want to turn it on
+  
+  }
+}
+
+# Server-Side Encryption (separate resource)
+resource "aws_s3_bucket_server_side_encryption_configuration" "mybucket_sse" {
+  bucket = aws_s3_bucket.mybucket.id
+
+  rule {
+    bucket_key_enabled = false
+
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
