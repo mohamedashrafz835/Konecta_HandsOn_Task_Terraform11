@@ -228,6 +228,89 @@ resource "aws_iam_role_policy" "auth_handler_policy" {
   })
 }
 
+resource "aws_iam_role_policy_attachment" "auth_handler_attach" {
+  role       = aws_iam_role.auth_handler.name
+  policy_arn = "arn:aws:iam::305905981536:role/one-journey-dev-test-authHandler-eu-west-1-lambdaRole"
+}
+
+resource "aws_iam_role_policy" "s3_policy" {
+  name = "one-journey-dev-test-lambda"
+  role = "one-journey-dev-test-coreS3Event-eu-west-1-lambdaRole"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:CreateLogGroup",
+          "logs:PutLogEvents"
+        ]
+        Resource = "arn:aws:logs:eu-west-1:305905981536:log-group:/aws/lambda/one-journey-dev-test-coreS3Event:*:*"
+      },
+      {
+        Effect = "Allow"
+        Action = ["events:PutEvents"]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = ["sqs:*"]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "states:StartExecution",
+          "states:SendTaskSuccess"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = "arn:aws:s3:::*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:PutParameter",
+          "ssm:GetParameter",
+          "ssm:DeleteParameter"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem"
+        ]
+        Resource = [
+          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-common-objects",
+          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-sessions",
+          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-mutex-lock"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "s3_attach" {
+  role       = aws_iam_role.auth_handler.name
+  policy_arn = "arn:aws:iam::305905981536:role/one-journey-dev-test-coreS3Event-eu-west-1-lambdaRole"
+}
+
 resource "aws_security_group" "main" {
   name        = "OJECSSecurityGroupLB-dev"
   description = "OJECSSecurityGroupLB-dev"
@@ -254,6 +337,37 @@ resource "aws_security_group" "main" {
   }
 }
 
+resource "aws_ecr_repository" "main" {
+  name                 = "one-journey-repository-dev"
+  image_tag_mutability = "MUTABLE"
+
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+
+  tags = {
+    OJ    = "OJ"
+    STAGE = "dev"
+  }
+}
+
+resource "aws_ecs_cluster" "main" {
+  name = "OJCluster-dev"
+
+  setting {
+    name  = "containerInsights"
+    value = "disabled"
+  }
+
+  tags = {
+    OJ    = "OJ"
+    STAGE = "dev"
+  }
+}
 
 resource "aws_s3_bucket" "main" {
   bucket = "amaya-logs"
@@ -307,9 +421,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "main1" {
     }
     bucket_key_enabled = false
   }
-
 }
-
 
 # Main bucket
 resource "aws_s3_bucket" "mybucket" {
