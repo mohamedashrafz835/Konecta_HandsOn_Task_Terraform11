@@ -17,4 +17,19 @@ variable "owner_id" {}
 variable "tags" {
   type = map(string)
 }
+variable "ecs_cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+}
+
+variable "ecs_container_insights" {
+  description = "Enable or disable ECS container insights"
+  type        = string
+}
+
+variable "ecs_tags" {
+  description = "Tags for the ECS cluster"
+  type        = map(string)
+}
+
 
