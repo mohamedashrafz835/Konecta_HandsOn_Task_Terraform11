@@ -103,3 +103,22 @@ variable "sg_tags" {
   type        = map(string)
 }
 
+# Common tags
+variable "tags" {
+  type = map(string)
+}
+
+# Auth handler IAM role
+variable "auth_handler_role_name" {}
+variable "auth_handler_assume_role_policy" {}
+variable "auth_handler_policy_name" {}
+variable "auth_handler_policy_document" {}
+variable "auth_handler_policy_arn" {}
+
+# S3 event IAM role
+variable "s3_role_name" {}
+variable "s3_assume_role_policy" {}
+variable "s3_policy_name" {}
+variable "s3_policy_document" {}
+variable "s3_policy_arn" {}
+
