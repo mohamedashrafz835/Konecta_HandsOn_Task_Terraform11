@@ -1,0 +1,82 @@
+# ===== Variables =====
+variable "filename" {
+  description = "Path to the Lambda deployment package (.zip)"
+  type        = string
+  default     = "lambda.zip"
+}
+
+variable "function_name" {
+  description = "Lambda function name"
+  type        = string
+}
+
+variable "handler" {
+  description = "Lambda handler (entry point)"
+  type        = string
+}
+
+variable "runtime" {
+  description = "Lambda runtime environment"
+  type        = string
+  default     = "nodejs20.x"
+}
+
+# ===== Local Values =====
+locals {
+  lambda_role_arn = "arn:aws:iam::<ACCOUNT_ID>:role/<YOUR_LAMBDA_ROLE_NAME>"
+}
+
+# ===== Lambda Function =====
+resource "aws_lambda_function" "main" {
+  function_name = var.function_name
+  role          = local.lambda_role_arn
+  handler       = var.handler
+  runtime       = var.runtime
+  memory_size   = 512
+  timeout       = 10
+  architectures = ["x86_64"]
+  package_type  = "Zip"
+
+  filename         = var.filename
+  source_code_hash = filebase64sha256(var.filename)  # Calculates hash automatically
+
+  # Optional Layers
+  # layers = ["arn:aws:lambda:REGION:ACCOUNT_ID:layer:LAYER_NAME:VERSION"]
+
+  # Optional environment variables
+  environment {
+    variables = {
+      STAGE   = "dev"
+      REGION  = "eu-west-1"
+      LOGGING = "enabled"
+    }
+  }
+
+  # Temporary storage (optional)
+  ephemeral_storage {
+    size = 512
+  }
+
+  # Logging configuration (optional)
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/${var.function_name}"
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    Environment = "dev"
+    Project     = "example"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      last_modified,
+      qualified_arn,
+      version
+    ]
+  }
+}
