@@ -44,3 +44,19 @@ output "security_group_arn" {
   value       = module.security_group.security_group_arn
 }
 
+
+output "auth_handler_role_name" {
+  value = module.iam_auth_handler.role_name
+}
+
+output "auth_handler_role_arn" {
+  value = module.iam_auth_handler.role_arn
+}
+
+output "s3_handler_role_name" {
+  value = module.iam_s3_handler.role_name
+}
+
+output "s3_handler_role_arn" {
+  value = module.iam_s3_handler.role_arn
+}
