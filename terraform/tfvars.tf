@@ -43,4 +43,31 @@ ecr_tags = {
   OJ    = "OJ"
   STAGE = "dev"
 }
+sg_name        = "OJECSSecurityGroupLB-dev"
+sg_description = "OJECSSecurityGroupLB-dev"
+sg_vpc_id      = "vpc-07a8c9cc4874997d8"
+
+sg_ingress_rules = [
+  {
+    description = "Allow HTTPS traffic"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+]
+
+sg_egress_rules = [
+  {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+]
+
+sg_tags = {
+  OJ    = "OJ"
+  STAGE = "dev"
+}
 
