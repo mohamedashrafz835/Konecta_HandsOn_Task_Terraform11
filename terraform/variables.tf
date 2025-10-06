@@ -11,3 +11,10 @@ variable "project_name" {}
 variable "tags" {
   type = map(string)
 }
+variable "cf_templates_bucket_name" {}
+variable "documents_bucket_name" {}
+variable "owner_id" {}
+variable "tags" {
+  type = map(string)
+}
+
