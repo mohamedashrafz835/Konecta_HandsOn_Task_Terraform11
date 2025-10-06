@@ -203,19 +203,14 @@ resource "aws_ecr_repository" "main" {
   }
 }
 
-resource "aws_ecs_cluster" "main" {
-  name = "OJCluster-dev"
+module "ecs_cluster" {
+  source = "./modules/ecs"
 
-  setting {
-    name  = "containerInsights"
-    value = "disabled"
-  }
-
-  tags = {
-    OJ    = "OJ"
-    STAGE = "dev"
-  }
+  cluster_name        = var.ecs_cluster_name
+  container_insights  = var.ecs_container_insights
+  tags                = var.ecs_tags
 }
+
 
 module "s3_cf_templates" {
   source = "./modules/s3"
@@ -368,5 +363,6 @@ module "my_lambda" {
   handler       = "index.handler"
   filename      = "lambda.zip"
 }
+
 
 
