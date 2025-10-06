@@ -567,4 +567,16 @@ resource "aws_lambda_function" "talkjs_webhook" {
       version
     ]
   }
+
+}
+
+
+
+
+module "my_lambda" {
+  source = "./lambda-module"
+
+  function_name = "my-sample-lambda"
+  handler       = "index.handler"
+  filename      = "lambda.zip"
 }
