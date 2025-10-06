@@ -159,31 +159,16 @@ resource "aws_iam_role_policy_attachment" "s3_attach" {
   policy_arn = "arn:aws:iam::305905981536:role/one-journey-dev-test-coreS3Event-eu-west-1-lambdaRole"
 }
 
-resource "aws_security_group" "main" {
-  name        = "OJECSSecurityGroupLB-dev"
-  description = "OJECSSecurityGroupLB-dev"
-  vpc_id      = "vpc-07a8c9cc4874997d8"
-
-  ingress {
-    description = "Free Ingress"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    OJ    = "OJ"
-    STAGE = "dev"
-  }
+module "security_group" {
+  source      = "./modules/security_group"
+  name        = var.sg_name
+  description = var.sg_description
+  vpc_id      = var.sg_vpc_id
+  ingress_rules = var.sg_ingress_rules
+  egress_rules  = var.sg_egress_rules
+  tags          = var.sg_tags
 }
+
 
 module "ecr" {
   source = "./modules/ecr"
@@ -361,6 +346,7 @@ module "my_lambda" {
   handler       = "index.handler"
   filename      = "lambda.zip"
 }
+
 
 
 
