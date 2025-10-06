@@ -185,23 +185,21 @@ resource "aws_security_group" "main" {
   }
 }
 
-resource "aws_ecr_repository" "main" {
-  name                 = "one-journey-repository-dev"
-  image_tag_mutability = "MUTABLE"
+module "ecr" {
+  source = "./modules/ecr"
 
-  encryption_configuration {
-    encryption_type = "AES256"
-  }
-
-  image_scanning_configuration {
-    scan_on_push = false
-  }
-
-  tags = {
-    OJ    = "OJ"
-    STAGE = "dev"
-  }
+  name                 = var.ecr_name
+  image_tag_mutability = var.ecr_image_tag_mutability
+  encryption_type      = var.ecr_encryption_type
+  scan_on_push         = var.ecr_scan_on_push
+  tags                 = var.ecr_tags
 }
+
+# Example: output some info
+output "ecr_repo_url" {
+  value = module.ecr.repository_url
+}
+
 
 module "ecs_cluster" {
   source = "./modules/ecs"
@@ -363,6 +361,7 @@ module "my_lambda" {
   handler       = "index.handler"
   filename      = "lambda.zip"
 }
+
 
 
 
