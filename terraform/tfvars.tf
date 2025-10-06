@@ -71,3 +71,149 @@ sg_tags = {
   STAGE = "dev"
 }
 
+tags = {
+  STAGE = "dev-test"
+  OJ    = "OJ"
+}
+
+# --- Auth Handler Role ---
+auth_handler_role_name = "one-journey-dev-test-authHandler-eu-west-1-lambdaRole"
+
+auth_handler_assume_role_policy = jsonencode({
+  Version = "2012-10-17"
+  Statement = [
+    {
+      Effect = "Allow"
+      Action = "sts:AssumeRole"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }
+  ]
+})
+
+auth_handler_policy_name = "one-journey-dev-test-lambda"
+
+auth_handler_policy_document = jsonencode({
+  Version = "2012-10-17"
+  Statement = [
+    {
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogStream",
+        "logs:CreateLogGroup",
+        "logs:PutLogEvents"
+      ]
+      Resource = "arn:aws:logs:eu-west-1:305905981536:log-group:/aws/lambda/one-journey-dev-test-authHandler:*:*"
+    },
+    {
+      Effect = "Allow"
+      Action = ["events:PutEvents"]
+      Resource = "*"
+    },
+    {
+      Effect = "Allow"
+      Action = [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem"
+      ]
+      Resource = [
+        "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-websockets-manager",
+        "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-workflow-context",
+        "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-sessions",
+        "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-common-objects"
+      ]
+    }
+  ]
+})
+
+auth_handler_policy_arn = "arn:aws:iam::305905981536:role/one-journey-dev-test-authHandler-eu-west-1-lambdaRole"
+
+# --- S3 Event Role ---
+s3_role_name = "one-journey-dev-test-coreS3Event-eu-west-1-lambdaRole"
+
+s3_assume_role_policy = jsonencode({
+  Version = "2012-10-17"
+  Statement = [
+    {
+      Effect = "Allow"
+      Action = "sts:AssumeRole"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }
+  ]
+})
+
+s3_policy_name = "one-journey-dev-test-lambda"
+
+s3_policy_document = jsonencode({
+  Version = "2012-10-17"
+  Statement = [
+    {
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogStream",
+        "logs:CreateLogGroup",
+        "logs:PutLogEvents"
+      ]
+      Resource = "arn:aws:logs:eu-west-1:305905981536:log-group:/aws/lambda/one-journey-dev-test-coreS3Event:*:*"
+    },
+    {
+      Effect = "Allow"
+      Action = ["events:PutEvents"]
+      Resource = "*"
+    },
+    {
+      Effect = "Allow"
+      Action = ["sqs:*"]
+      Resource = "*"
+    },
+    {
+      Effect = "Allow"
+      Action = [
+        "states:StartExecution",
+        "states:SendTaskSuccess"
+      ]
+      Resource = "*"
+    },
+    {
+      Effect = "Allow"
+      Action = [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListBucket"
+      ]
+      Resource = "arn:aws:s3:::*"
+    },
+    {
+      Effect = "Allow"
+      Action = [
+        "ssm:PutParameter",
+        "ssm:GetParameter",
+        "ssm:DeleteParameter"
+      ]
+      Resource = "*"
+    },
+    {
+      Effect = "Allow"
+      Action = [
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem"
+      ]
+      Resource = [
+        "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-common-objects",
+        "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-sessions",
+        "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-mutex-lock"
+      ]
+    }
+  ]
+})
+
+s3_policy_arn = "arn:aws:iam::305905981536:role/one-journey-dev-test-coreS3Event-eu-west-1-lambdaRole"
