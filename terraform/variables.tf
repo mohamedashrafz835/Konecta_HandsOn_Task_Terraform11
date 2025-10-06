@@ -33,3 +33,32 @@ variable "ecs_tags" {
 }
 
 
+variable "ecr_name" {
+  description = "The name of the ECR repository"
+  type        = string
+}
+
+variable "ecr_image_tag_mutability" {
+  description = "The tag mutability for the ECR repository"
+  type        = string
+  default     = "MUTABLE"
+}
+
+variable "ecr_encryption_type" {
+  description = "Encryption type for the ECR repository"
+  type        = string
+  default     = "AES256"
+}
+
+variable "ecr_scan_on_push" {
+  description = "Whether to scan images on push"
+  type        = bool
+  default     = false
+}
+
+variable "ecr_tags" {
+  description = "Tags for the ECR repository"
+  type        = map(string)
+  default     = {}
+}
+
