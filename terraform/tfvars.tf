@@ -27,3 +27,9 @@ tags = {
   Platform = "Terraform"
   Project  = "ONE Journey Dev"
 }
+ecs_cluster_name       = "OJCluster-dev"
+ecs_container_insights = "disabled"
+ecs_tags = {
+  OJ    = "OJ"
+  STAGE = "dev"
+}
