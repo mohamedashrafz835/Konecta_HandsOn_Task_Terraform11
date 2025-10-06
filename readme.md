@@ -197,11 +197,11 @@ Contributions are welcome! Please follow these steps:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 👤 Author
+## 👤 Authors
 
 **Mohamed Ashraf**
 - GitHub: [@mohamedashrafz835](https://github.com/mohamedashrafz835)
-- - GitHub: [@SherifAmino](https://github.com/SherifAmino)
+- GitHub: [@SherifAmino](https://github.com/SherifAmino)
 
 ## 🙏 Acknowledgments
 
