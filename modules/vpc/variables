@@ -1,0 +1,18 @@
+variable "vpc_cidr" { type = string }
+variable "public1_cidr" { type = string }
+variable "public2_cidr" { type = string }
+variable "private1_cidr" { type = string }
+variable "private2_cidr" { type = string }
+
+variable "az1" { type = string }
+variable "az2" { type = string }
+
+variable "nat1_eip" { type = string }
+variable "nat2_eip" { type = string }
+
+variable "project_name" { type = string }
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
