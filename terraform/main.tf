@@ -15,148 +15,26 @@ module "vpc" {
 }
 
 
-# IAM Role
-resource "aws_iam_role" "auth_handler" {
-  name = "one-journey-dev-test-authHandler-eu-west-1-lambdaRole"
+module "iam_auth_handler" {
+  source = "./modules/iam"
 
-  assume_role_policy = jsonencode({
-    Version   = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = "sts:AssumeRole"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
-
-  tags = {
-    STAGE = "dev-test"
-  }
+  role_name          = var.auth_handler_role_name
+  assume_role_policy = var.auth_handler_assume_role_policy
+  policy_name        = var.auth_handler_policy_name
+  policy_document    = var.auth_handler_policy_document
+  policy_arn         = var.auth_handler_policy_arn
+  tags               = var.tags
 }
 
-resource "aws_iam_role_policy" "auth_handler_policy" {
-  name = "one-journey-dev-test-lambda"
-  role = "one-journey-dev-test-authHandler-eu-west-1-lambdaRole"
+module "iam_s3_handler" {
+  source = "./modules/iam"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogStream",
-          "logs:CreateLogGroup",
-          "logs:PutLogEvents"
-        ]
-        Resource = "arn:aws:logs:eu-west-1:305905981536:log-group:/aws/lambda/one-journey-dev-test-authHandler:*:*"
-      },
-      {
-        Effect = "Allow"
-        Action = ["events:PutEvents"]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:UpdateItem"
-        ]
-        Resource = [
-          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-websockets-manager",
-          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-workflow-context",
-          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-sessions",
-          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-common-objects"
-        ]
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "auth_handler_attach" {
-  role       = aws_iam_role.auth_handler.name
-  policy_arn = "arn:aws:iam::305905981536:role/one-journey-dev-test-authHandler-eu-west-1-lambdaRole"
-}
-
-resource "aws_iam_role_policy" "s3_policy" {
-  name = "one-journey-dev-test-lambda"
-  role = "one-journey-dev-test-coreS3Event-eu-west-1-lambdaRole"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogStream",
-          "logs:CreateLogGroup",
-          "logs:PutLogEvents"
-        ]
-        Resource = "arn:aws:logs:eu-west-1:305905981536:log-group:/aws/lambda/one-journey-dev-test-coreS3Event:*:*"
-      },
-      {
-        Effect = "Allow"
-        Action = ["events:PutEvents"]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = ["sqs:*"]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "states:StartExecution",
-          "states:SendTaskSuccess"
-        ]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:PutObject",
-          "s3:GetObject",
-          "s3:DeleteObject",
-          "s3:ListBucket"
-        ]
-        Resource = "arn:aws:s3:::*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ssm:PutParameter",
-          "ssm:GetParameter",
-          "ssm:DeleteParameter"
-        ]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "dynamodb:Query",
-          "dynamodb:Scan",
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:UpdateItem",
-          "dynamodb:DeleteItem"
-        ]
-        Resource = [
-          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-common-objects",
-          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-sessions",
-          "arn:aws:dynamodb:eu-west-1:305905981536:table/one-journey-mutex-lock"
-        ]
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "s3_attach" {
-  role       = aws_iam_role.auth_handler.name
-  policy_arn = "arn:aws:iam::305905981536:role/one-journey-dev-test-coreS3Event-eu-west-1-lambdaRole"
+  role_name          = var.s3_role_name
+  assume_role_policy = var.s3_assume_role_policy
+  policy_name        = var.s3_policy_name
+  policy_document    = var.s3_policy_document
+  policy_arn         = var.s3_policy_arn
+  tags               = var.tags
 }
 
 module "security_group" {
@@ -346,6 +224,7 @@ module "my_lambda" {
   handler       = "index.handler"
   filename      = "lambda.zip"
 }
+
 
 
 
