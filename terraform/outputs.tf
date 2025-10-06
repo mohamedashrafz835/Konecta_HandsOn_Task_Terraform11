@@ -29,3 +29,18 @@ output "ecr_registry_id" {
   value       = module.ecr.registry_id
 }
 
+output "security_group_id" {
+  description = "The ID of the created Security Group"
+  value       = module.security_group.security_group_id
+}
+
+output "security_group_name" {
+  description = "The name of the Security Group"
+  value       = module.security_group.security_group_name
+}
+
+output "security_group_arn" {
+  description = "The ARN of the Security Group"
+  value       = module.security_group.security_group_arn
+}
+
