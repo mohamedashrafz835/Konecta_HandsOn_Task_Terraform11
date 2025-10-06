@@ -33,3 +33,14 @@ ecs_tags = {
   OJ    = "OJ"
   STAGE = "dev"
 }
+
+ecr_name                 = "one-journey-repository-dev"
+ecr_image_tag_mutability = "MUTABLE"
+ecr_encryption_type      = "AES256"
+ecr_scan_on_push         = false
+
+ecr_tags = {
+  OJ    = "OJ"
+  STAGE = "dev"
+}
+
