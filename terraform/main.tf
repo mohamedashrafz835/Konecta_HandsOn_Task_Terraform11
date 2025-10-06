@@ -217,90 +217,30 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 
-resource "aws_s3_bucket" "main" {
-  bucket = "amaya-logs"
+module "s3_cf_templates" {
+  source = "./modules/s3"
+
+  bucket_name       = var.cf_templates_bucket_name
+  force_destroy     = false
+  owner_id          = var.owner_id
+  versioning_status = "Disabled"
+  sse_algorithm     = "AES256"
+  bucket_key_enabled = false
+  tags              = var.tags
 }
 
-# Main S3 bucket resource
-resource "aws_s3_bucket" "main1" {
-  bucket = "cf-templates-11mxdb199vu4y-eu-west-1"
+module "s3_documents" {
+  source = "./modules/s3"
 
-  tags = {
-    # Add your tags here if needed
-  }
+  bucket_name       = var.documents_bucket_name
+  force_destroy     = false
+  owner_id          = var.owner_id
+  versioning_status = "Disabled"
+  sse_algorithm     = "AES256"
+  bucket_key_enabled = false
+  tags              = var.tags
 }
 
-resource "aws_s3_bucket_acl" "main1" {
-  bucket = aws_s3_bucket.main1.id
-
-  access_control_policy {
-    owner {
-      id = "e65b8be90b02e3c981860e80965f9ea93006d3a6431b4428f4d4c8ee1baf47bc"
-    }
-
-    grant {
-      permission = "FULL_CONTROL"
-
-      grantee {
-        id   = "e65b8be90b02e3c981860e80965f9ea93006d3a6431b4428f4d4c8ee1baf47bc"
-        type = "CanonicalUser"
-      }
-    }
-  }
-}
-
-
-# Versioning must be managed separately
-resource "aws_s3_bucket_versioning" "main1" {
-  bucket = aws_s3_bucket.main1.id
-
-  versioning_configuration {
-    status = "Disabled"
-  }
-}
-
-# Server-side encryption must be managed separately
-resource "aws_s3_bucket_server_side_encryption_configuration" "main1" {
-  bucket = aws_s3_bucket.main1.id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-    bucket_key_enabled = false
-  }
-}
-
-# Main bucket
-resource "aws_s3_bucket" "mybucket" {
-  bucket        = "oj-docu1-khovrqxn9xyiwxtprdjmq"
-  force_destroy = false
-
-  tags = {}
-}
-
-# Versioning (separate resource)
-resource "aws_s3_bucket_versioning" "mybucket_versioning" {
-  bucket = aws_s3_bucket.mybucket.id
-
-  versioning_configuration {
-    status     = "Disabled" # Change to "Enabled" if you want to turn it on
-  
-  }
-}
-
-# Server-Side Encryption (separate resource)
-resource "aws_s3_bucket_server_side_encryption_configuration" "mybucket_sse" {
-  bucket = aws_s3_bucket.mybucket.id
-
-  rule {
-    bucket_key_enabled = false
-
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
 variable "filename" {
   description = "Path to the Lambda deployment package (zip). If using S3, leave empty and set s3_bucket/s3_key instead."
   type        = string
@@ -428,4 +368,5 @@ module "my_lambda" {
   handler       = "index.handler"
   filename      = "lambda.zip"
 }
+
 
