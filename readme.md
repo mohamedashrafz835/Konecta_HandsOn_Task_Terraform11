@@ -201,6 +201,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **Mohamed Ashraf**
 - GitHub: [@mohamedashrafz835](https://github.com/mohamedashrafz835)
+
+**Sherif Amin**
 - GitHub: [@SherifAmino](https://github.com/SherifAmino)
 
 ## 🙏 Acknowledgments
