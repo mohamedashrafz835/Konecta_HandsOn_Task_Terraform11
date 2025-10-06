@@ -17,3 +17,13 @@ tags = {
   Platform = "Terraform"
   Project  = "ONE Journey Dev"
 }
+cf_templates_bucket_name = "cf-templates-11mxdb199vu4y-eu-west-1"
+documents_bucket_name    = "oj-docu1-khovrqxn9xyiwxtprdjmq"
+
+owner_id = "e65b8be90b02e3c981860e80965f9ea93006d3a6431b4428f4d4c8ee1baf47bc"
+
+tags = {
+  Country  = "Espana"
+  Platform = "Terraform"
+  Project  = "ONE Journey Dev"
+}
